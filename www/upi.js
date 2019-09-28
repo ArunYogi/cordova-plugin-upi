@@ -39,7 +39,7 @@ UPI.prototype.acceptPayment = function (config, app, sCallback, fCallback) {
     var l = Object.keys(config).length;
     Object.keys(CONFIG).forEach(function (k, index) {
         c.upiString += CONFIG[k] + "=" + (config[k] + "");
-        if (index < l) { c.upiString += "&" }
+        if (index < (l - 1)) { c.upiString += "&" }
     })
     cordova.exec(sCallback, fCallback, "UPIPlugin", "acceptPayment", [c]);
 }
