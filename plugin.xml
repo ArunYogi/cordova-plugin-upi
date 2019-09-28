@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" 
+    xmlns:android="http://schemas.android.com/apk/res/android" id="cordova-plugin-usbprint" version="0.0.4">
+    <name>UPI</name>
+
+    <description>This Plugin allows you receive payment via UPI.</description>
+
+    <author>Arun Yokesh Kumar</author>
+
+    <license>MIT</license>
+
+    <keywords>cordova, plugin, UPI, NPCI, Mobile</keywords>
+
+    <repo>https://github.com/ArunYogi/cordova-plugin-upi.git</repo>
+
+    <issue>https://github.com/ArunYogi/cordova-plugin-upi/issues</issue>
+
+    <js-module src="www/upi.js" name="UPI">
+        <clobbers target="window.UPI" />
+    </js-module>
+
+    <!-- android -->
+    <platform name="android">
+
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="UPI">
+                <param name="android-package" value="com.cordova.upi.UPIPlugin" />
+                <param name="onload" value="true"/>
+            </feature>
+        </config-file>
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <receiver android:name="com.cordova.upi.UPIAppSelectionReceiver" android:exported="false"/>
+        </config-file>
+        <source-file src="src/android/UPIPluing.java" target-dir="src/com/cordova/upi"/>
+    </platform>
+</plugin>
