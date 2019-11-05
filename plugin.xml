@@ -23,7 +23,7 @@
     <platform name="android">
 
         <config-file target="res/xml/config.xml" parent="/*">
-            <feature name="UPI">
+            <feature name="UPIPlugin">
                 <param name="android-package" value="com.cordova.upi.UPIPlugin" />
                 <param name="onload" value="true"/>
             </feature>
@@ -31,6 +31,6 @@
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <receiver android:name="com.cordova.upi.UPIAppSelectionReceiver" android:exported="false"/>
         </config-file>
-        <source-file src="src/android/UPIPluing.java" target-dir="src/com/cordova/upi"/>
+        <source-file src="src/android/UPIPlugin.java" target-dir="src/com/cordova/upi"/>
     </platform>
 </plugin>
