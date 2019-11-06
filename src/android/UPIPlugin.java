@@ -33,7 +33,7 @@ public class UPIPlugin extends CordovaPlugin {
     public class UPIAppSelectionReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            super.onReceive(context, intent);
+            // super.onReceive(context, intent);
             this.application = String.valueOf(intent.getExtras().get(EXTRA_CHOSEN_COMPONENT));
         }
     }
@@ -93,25 +93,31 @@ public class UPIPlugin extends CordovaPlugin {
         this.callbackContext = callbackContext;
         try {
             this.application = options.getString("application");
+            if (!isAvailable(this.application)) {
+                this.application = null;
+            }
         } catch (JSONException exp) {
             this.application = null;
             Log.e(TAG, "There is no application information present in request context");
         }
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(options.getString("upiString")));
-        Context context = getCurrentActivity().getApplicationContext();
-        if (this.application == null) {
-            Intent receiver = new Intent(context, UPIAppSelectionReceiver.class);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, receiver,
-                    PendingIntent.FLAG_UPDATE_CURRENT);
-            Intent chooser = Intent.createChooser(intent, "Pay using", pendingIntent.getIntentSender());
-            getCurrentActivity().startActivityForResult(chooser, REQUEST_CODE);
-        } else {
-            if (isAvailable(application)) {
+        try {
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(options.getString("upiString")));
+            Context context = getCurrentActivity().getApplicationContext();
+            if (this.application == null) {
+                Intent receiver = new Intent(context, UPIAppSelectionReceiver.class);
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, receiver,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
+                Intent chooser = Intent.createChooser(intent, "Pay using", pendingIntent.getIntentSender());
+                getCurrentActivity().startActivityForResult(chooser, REQUEST_CODE);
+            } else {
                 intent.setPackage(application);
                 getCurrentActivity().startActivityForResult(intent, REQUEST_CODE);
             }
+        } catch (JSONException exp) {
+            Log.e(TAG, "There is no application information present in request context");
+            callbackContext.error("Issue in parsing the upi string");
         }
     }
 
