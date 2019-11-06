@@ -87,7 +87,7 @@ public class UPIPlugin extends CordovaPlugin {
             JSONArray result = new JSONArray();
             Iterator entries = this.APPLICATIONS.entrySet().iterator();
             while (entries.hasNext()) {
-                Entry<String, String> e = entries.next();
+                Map.Entry<String, String> e = entries.next();
                 if (isAvailable(e.getValue())) {
                     result.put(e.getKey());
                 }
