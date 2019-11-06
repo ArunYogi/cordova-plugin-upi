@@ -85,7 +85,7 @@ public class UPIPlugin extends CordovaPlugin {
     private void fetchSupportedApps(final CallbackContext callbackContext) {
         try {
             JSONArray result = new JSONArray();
-            Iterator entries = this.APPLICATIONS.entrySet().iterator();
+            Iterator<Map.Entry<String, String>> entries = this.APPLICATIONS.entrySet().iterator();
             while (entries.hasNext()) {
                 Map.Entry<String, String> e = entries.next();
                 if (isAvailable(e.getValue())) {
@@ -120,10 +120,10 @@ public class UPIPlugin extends CordovaPlugin {
                 PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, receiver,
                         PendingIntent.FLAG_UPDATE_CURRENT);
                 Intent chooser = Intent.createChooser(intent, "Pay using", pendingIntent.getIntentSender());
-                context.startActivityForResult(chooser, REQUEST_CODE);
+                cordova.startActivityForResult(this, chooser, REQUEST_CODE);
             } else {
                 intent.setPackage(application);
-                context.startActivityForResult(intent, REQUEST_CODE);
+                cordova.startActivityForResult(this, intent, REQUEST_CODE);
             }
         } catch (JSONException exp) {
             Log.e(TAG, "There is no application information present in request context");
@@ -135,7 +135,7 @@ public class UPIPlugin extends CordovaPlugin {
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == REQUEST_CODE) {
             if (intent != null) {
-                Log.i(TAG, "UPI payment response ", bundle2string(intent.getExtras()));
+                Log.i(TAG, "UPI payment response " + bundle2string(intent.getExtras()));
                 try {
                     JSONObject result = new JSONObject();
                     result.put("status", intent.getStringExtra("Status"));
@@ -186,10 +186,10 @@ public class UPIPlugin extends CordovaPlugin {
     }
 
     private void parseUpiResponse(String upi_response, JSONObject json) {
-        List<String> _parts = upi_response.split("&");
+        String[] _parts = upi_response.split("&");
         for (int i = 0; i < _parts.length; ++i) {
-            String key = _parts.get(i).split("=")[0];
-            String value = _parts.get(i).split("=")[1];
+            String key = _parts[i].split("=")[0];
+            String value = _parts[i].split("=")[1];
             json.put(key, value);
             if (key.toLowerCase() == "status") {
                 json.put("status", value);
