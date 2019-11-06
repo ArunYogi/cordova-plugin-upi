@@ -1,6 +1,8 @@
 package com.cordova.upi;
 
 import android.app.Activity;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -8,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -34,7 +37,10 @@ public class UPIPlugin extends CordovaPlugin {
         @Override
         public void onReceive(Context context, Intent intent) {
             // super.onReceive(context, intent);
-            this.application = String.valueOf(intent.getExtras().get(EXTRA_CHOSEN_COMPONENT));
+            for (String key : intent.getExtras().keySet()) {
+                Log.i(TAG, " Intent extras " + key + " " + intent.getExtras().get(key));
+            }
+            application = String.valueOf(intent.getExtras().get(android.intent.extra.CHOSEN_COMPONENT));
         }
     }
 
@@ -110,10 +116,10 @@ public class UPIPlugin extends CordovaPlugin {
                 PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, receiver,
                         PendingIntent.FLAG_UPDATE_CURRENT);
                 Intent chooser = Intent.createChooser(intent, "Pay using", pendingIntent.getIntentSender());
-                getCurrentActivity().startActivityForResult(chooser, REQUEST_CODE);
+                context.startActivityForResult(chooser, REQUEST_CODE);
             } else {
                 intent.setPackage(application);
-                getCurrentActivity().startActivityForResult(intent, REQUEST_CODE);
+                context.startActivityForResult(intent, REQUEST_CODE);
             }
         } catch (JSONException exp) {
             Log.e(TAG, "There is no application information present in request context");
@@ -125,7 +131,7 @@ public class UPIPlugin extends CordovaPlugin {
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == REQUEST_CODE) {
             if (intent != null) {
-                Log.i(TAG, "UPI payment response ", bundle2string(intent.getExtras));
+                Log.i(TAG, "UPI payment response ", bundle2string(intent.getExtras()));
                 try {
                     JSONObject result = new JSONObject();
                     result.put("status", intent.getStringExtra("Status"));
@@ -165,7 +171,7 @@ public class UPIPlugin extends CordovaPlugin {
     }
 
     private boolean isAvailable(String bundleId) {
-        PackageManager pm = activity.getPackageManager();
+        PackageManager pm = getCurrentActivity().getPackageManager();
         try {
             pm.getPackageInfo(bundleId, PackageManager.GET_ACTIVITIES);
             return true;
@@ -178,8 +184,8 @@ public class UPIPlugin extends CordovaPlugin {
     private void parseUpiResponse(String upi_response, JSONObject json) {
         List<String> _parts = upi_response.split("&");
         for (int i = 0; i < _parts.length; ++i) {
-            String key = _parts[i].split('=')[0];
-            String value = _parts[i].split('=')[1];
+            String key = _parts.get(i).split("=")[0];
+            String value = _parts.get(i).split("=")[1];
             json.put(key, value);
             if (key.toLowerCase() == "status") {
                 json.put("status", value);
@@ -188,7 +194,7 @@ public class UPIPlugin extends CordovaPlugin {
     }
 
     private String getApplicationName(String bundleId) {
-        if (this.APPLICATIONS.containsValue(value)) {
+        if (this.APPLICATIONS.containsValue(bundleId)) {
             for (String key : this.APPLICATIONS.keySet()) {
                 String v = this.APPLICATIONS.get(key);
                 if (v == bundleId) {
