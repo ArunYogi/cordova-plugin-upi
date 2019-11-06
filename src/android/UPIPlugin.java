@@ -12,7 +12,9 @@ import android.util.Log;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
@@ -40,7 +42,7 @@ public class UPIPlugin extends CordovaPlugin {
             for (String key : intent.getExtras().keySet()) {
                 Log.i(TAG, " Intent extras " + key + " " + intent.getExtras().get(key));
             }
-            application = String.valueOf(intent.getExtras().get(android.intent.extra.CHOSEN_COMPONENT));
+            application = String.valueOf(intent.getExtras().get(Intent.EXTRA_CHOSEN_COMPONENT));
         }
     }
 
@@ -83,9 +85,11 @@ public class UPIPlugin extends CordovaPlugin {
     private void fetchSupportedApps(final CallbackContext callbackContext) {
         try {
             JSONArray result = new JSONArray();
-            for (String app : this.APPLICATIONS.values()) {
-                if (isAvailable(this.APPLICATIONS.get(app))) {
-                    result.put(app);
+            Iterator entries = this.APPLICATIONS.entrySet().iterator();
+            while (entries.hasNext()) {
+                Entry<String, String> e = entries.next();
+                if (isAvailable(e.getValue())) {
+                    result.put(e.getKey());
                 }
             }
             callbackContext.success(result);
