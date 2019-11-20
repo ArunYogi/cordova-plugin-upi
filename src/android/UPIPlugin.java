@@ -1,8 +1,6 @@
 package com.cordova.upi;
 
 import android.app.Activity;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -35,17 +33,6 @@ public class UPIPlugin extends CordovaPlugin {
     private String application;
     private CallbackContext callbackContext;
 
-    public class UPIAppSelectionReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            // super.onReceive(context, intent);
-            for (String key : intent.getExtras().keySet()) {
-                Log.i(TAG, " Intent extras " + key + " " + intent.getExtras().get(key));
-            }
-            application = String.valueOf(intent.getExtras().get(Intent.EXTRA_CHOSEN_COMPONENT));
-        }
-    }
-
     protected void pluginInitialize() {
         this.APPLICATIONS.put("Paytm", "net.one97.paytm");
         this.APPLICATIONS.put("GooglePay", "com.google.android.apps.nbu.paisa.user");
@@ -58,7 +45,7 @@ public class UPIPlugin extends CordovaPlugin {
 
     }
 
-    private getCurrentActivity() {
+    private Activity getCurrentActivity() {
         return cordova.getActivity();
     }
 
@@ -71,10 +58,10 @@ public class UPIPlugin extends CordovaPlugin {
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-        if (!action.equals("supportedApps")) {
+        if (action.equals("supportedApps")) {
             fetchSupportedApps(callbackContext);
             return true;
-        } else if (!action.equals("acceptPayment")) {
+        } else if (action.equals("acceptPayment")) {
             JSONObject options = args.getJSONObject(0);
             acceptPayment(options, callbackContext);
             return true;
@@ -83,26 +70,22 @@ public class UPIPlugin extends CordovaPlugin {
     }
 
     private void fetchSupportedApps(final CallbackContext callbackContext) {
-        try {
-            JSONArray result = new JSONArray();
-            Iterator<Map.Entry<String, String>> entries = this.APPLICATIONS.entrySet().iterator();
-            while (entries.hasNext()) {
-                Map.Entry<String, String> e = entries.next();
-                if (isAvailable(e.getValue())) {
-                    result.put(e.getKey());
-                }
+        JSONArray result = new JSONArray();
+        Iterator<Map.Entry<String, String>> entries = this.APPLICATIONS.entrySet().iterator();
+        while (entries.hasNext()) {
+            Map.Entry<String, String> e = entries.next();
+            if (isAvailable(e.getValue())) {
+                result.put(e.getKey());
             }
-            callbackContext.success(result);
-        } catch (JSONException exp) {
-            Log.e(TAG, "Issue in forming jsonArray for upi supported application in mobile", exp);
-            callbackContext.error("Issue in fetching UPI supported apps");
         }
+        callbackContext.success(result);
     }
 
     private void acceptPayment(JSONObject options, final CallbackContext callbackContext) {
         this.callbackContext = callbackContext;
         try {
-            this.application = options.getString("application");
+            String app = options.getString("application");
+            this.application = this.APPLICATIONS.get(app);
             if (!isAvailable(this.application)) {
                 this.application = null;
             }
@@ -116,12 +99,10 @@ public class UPIPlugin extends CordovaPlugin {
             intent.setData(Uri.parse(options.getString("upiString")));
             Context context = getCurrentActivity().getApplicationContext();
             if (this.application == null) {
-                Intent receiver = new Intent(context, UPIAppSelectionReceiver.class);
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, receiver,
-                        PendingIntent.FLAG_UPDATE_CURRENT);
-                Intent chooser = Intent.createChooser(intent, "Pay using", pendingIntent.getIntentSender());
+                Intent chooser = Intent.createChooser(intent, "Pay using");
                 cordova.startActivityForResult(this, chooser, REQUEST_CODE);
             } else {
+                Log.i(TAG, "Initiating payment using app " + this.application);
                 intent.setPackage(application);
                 cordova.startActivityForResult(this, intent, REQUEST_CODE);
             }
@@ -133,6 +114,7 @@ public class UPIPlugin extends CordovaPlugin {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        Log.i(TAG, "Request code " + requestCode + " resultCode " + resultCode);
         if (requestCode == REQUEST_CODE) {
             if (intent != null) {
                 Log.i(TAG, "UPI payment response " + bundle2string(intent.getExtras()));
@@ -143,14 +125,10 @@ public class UPIPlugin extends CordovaPlugin {
                     if (this.application != null) {
                         result.put("application", getApplicationName(this.application));
                     }
-                    parseUpiResponse(intent.getStringExtra("response"), result);
                     try {
+                        parseUpiResponse(intent.getStringExtra("response"), result);
                         String status = result.getString("status");
-                        if (status == "SUCCESS") {
-                            this.callbackContext.success(result);
-                        } else {
-                            this.callbackContext.error(result);
-                        }
+                        this.callbackContext.success(result);
                     } catch (Exception exp) {
                         Log.e(TAG, "Issue in checking the status of  while parsing response from UPI callback", exp);
                         this.callbackContext.error("null_response");
@@ -161,7 +139,7 @@ public class UPIPlugin extends CordovaPlugin {
                 }
             } else {
                 try {
-                    Log.d("Result", "Data = null (User canceled)");
+                    Log.d(TAG, "Data = null (User canceled)");
                     JSONObject result = new JSONObject();
                     result.put("status", "USER_CANCELLED");
                     this.callbackContext.error(result);
@@ -180,12 +158,12 @@ public class UPIPlugin extends CordovaPlugin {
             pm.getPackageInfo(bundleId, PackageManager.GET_ACTIVITIES);
             return true;
         } catch (PackageManager.NameNotFoundException e) {
-            Log.e(TAG, "Error networkNotAvailable json object creation", e);
+            Log.e(TAG, "Error networkNotAvailable json object creation so " + bundleId + " is present in mobile");
         }
         return false;
     }
 
-    private void parseUpiResponse(String upi_response, JSONObject json) {
+    private void parseUpiResponse(String upi_response, JSONObject json) throws JSONException {
         String[] _parts = upi_response.split("&");
         for (int i = 0; i < _parts.length; ++i) {
             String key = _parts[i].split("=")[0];
