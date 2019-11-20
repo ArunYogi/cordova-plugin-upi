@@ -42,6 +42,20 @@ public class UPIPlugin extends CordovaPlugin {
         this.APPLICATIONS.put("AmazonPay", "in.amazon.mShop.android.shopping");
         this.APPLICATIONS.put("TrueCallerUPI", "com.truecaller");
         this.APPLICATIONS.put("MyAirtelUPI", "com.myairtelapp");
+        this.APPLICATIONS.put("ICICI iMobile", "com.csam.icici.bank.imobile");
+        this.APPLICATIONS.put("Canara Bank", "com.canarabank.mobility");
+        this.APPLICATIONS.put("Yes Bank", "com.atomyes");
+        this.APPLICATIONS.put("Kotak Bank for Tablet", "com.msf.kbank.tablet");
+        this.APPLICATIONS.put("Kotak - 811", "com.msf.kbank.mobile");
+        this.APPLICATIONS.put("HDFC Bank", "com.snapwork.hdfcbank");
+        this.APPLICATIONS.put("Axis Mobile", "com.axis.mobile");
+        this.APPLICATIONS.put("BHIM IndianBank UPI", "com.infrasofttech.indianbankupi");
+        this.APPLICATIONS.put("BHIM Union Bank Pay", "com.fss.ubipsp");
+        this.APPLICATIONS.put("BHIM PNB", "com.fss.pnbpsp");
+        this.APPLICATIONS.put("BHIM SBI Pay", "com.sbi.upi");
+        this.APPLICATIONS.put("YONO SBI", "com.sbi.lotusintouch");
+        this.APPLICATIONS.put("Yono Lite SBI", "com.sbi.SBIFreedomPlus");
+        this.APPLICATIONS.put("BOI Mobile", "com.boi.mpay");
 
     }
 
