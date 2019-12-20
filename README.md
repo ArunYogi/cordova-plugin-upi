@@ -22,7 +22,24 @@ let failureCallback = function (err) {
 window["UPI"].supportedApps(successCallback, failureCallback);
 ```
 * Start a transaction
+you can start a transaction either by passing upistring or parsed value as given below.
+
 ```js
+let config = {
+        "pa": "pa", // VPA no from UPI payment acc
+        "pn": "pn", // Merchant Name registered in UPI payment acc
+        "me": "me", // Merchant Code from UPI payment acc
+        "tid": "tid", // Unique transaction id for merchant's reference
+        "tr": "tr", // Unique transaction id for merchant's reference
+        "tn": "tn", // Note that will displayed in payment app during transaction
+        "am": "am", // Amount 
+        "mam": "mam", // its optional. Minimum amount that has to be transferred 
+        "cu": "cu", // Currency of amount
+        "url": "url" // URL for the order
+};
+
+or
+
 let config = {
         "payeeVPA": "pa", // VPA no from UPI payment acc
         "payeeName": "pn", // Merchant Name registered in UPI payment acc
