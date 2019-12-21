@@ -114,7 +114,11 @@ public class UPIPlugin extends CordovaPlugin {
             Context context = getCurrentActivity().getApplicationContext();
             if (this.application == null) {
                 Intent chooser = Intent.createChooser(intent, "Pay using");
-                cordova.startActivityForResult(this, chooser, REQUEST_CODE);
+                if (chooser != null) {
+                    cordova.startActivityForResult(this, chooser, REQUEST_CODE);
+                } else {
+                    callbackContext.error("no_upi_apps");
+                }
             } else {
                 Log.i(TAG, "Initiating payment using app " + this.application);
                 intent.setPackage(application);
@@ -122,7 +126,7 @@ public class UPIPlugin extends CordovaPlugin {
             }
         } catch (JSONException exp) {
             Log.e(TAG, "There is no application information present in request context");
-            callbackContext.error("Issue in parsing the upi string");
+            callbackContext.error("malformed_upistring");
         }
     }
 
@@ -172,7 +176,7 @@ public class UPIPlugin extends CordovaPlugin {
             pm.getPackageInfo(bundleId, PackageManager.GET_ACTIVITIES);
             return true;
         } catch (PackageManager.NameNotFoundException e) {
-            Log.e(TAG, "Error networkNotAvailable json object creation so " + bundleId + " is present in mobile");
+            Log.i(TAG, bundleId + " is not present in mobile");
         }
         return false;
     }
