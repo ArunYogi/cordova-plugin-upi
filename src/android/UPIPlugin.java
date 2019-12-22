@@ -135,7 +135,7 @@ public class UPIPlugin extends CordovaPlugin {
         Log.i(TAG, "Request code " + requestCode + " resultCode " + resultCode);
         if (requestCode == REQUEST_CODE) {
             if (intent != null) {
-                Log.i(TAG, "UPI payment response " + bundle2string(intent.getExtras()));
+                Log.d(TAG, "UPI payment response " + bundle2string(intent.getExtras()));
                 try {
                     JSONObject result = new JSONObject();
                     result.put("status", intent.getStringExtra("Status"));
