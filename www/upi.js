@@ -16,7 +16,10 @@ var supportedApps = function (sCallback, fCallback) {
     cordova.exec(sCallback, fCallback, "UPIPlugin", "supportedApps", []);
 }
 var acceptPayment = function (config, app, sCallback, fCallback) {
-    var c = { upiString: "upi://pay?", application: app };
+    var a = null;
+    if (typeof app == "string") { a = { appId: app }; }
+    else if (app && typeof app == "object") { a = app; }
+    var c = { upiString: "upi://pay?", application: a };
     if (typeof config == "string") {
         c.upiString = config;
     } else {

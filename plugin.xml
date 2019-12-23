@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" 
-    xmlns:android="http://schemas.android.com/apk/res/android" id="cordova-plugin-upi" version="1.0.0">
+    xmlns:android="http://schemas.android.com/apk/res/android" id="cordova-plugin-upi" version="1.0.1">
     <name>UPI</name>
 
     <description>This Plugin allows you receive payment via UPI.</description>
@@ -27,6 +27,10 @@
                 <param name="onload" value="true"/>
             </feature>
         </config-file>
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <receiver android:name="com.cordova.upi.ApplicationSelectorReceiver"/>
+        </config-file>
         <source-file src="src/android/UPIPlugin.java" target-dir="src/com/cordova/upi"/>
+        <source-file src="src/android/ApplicationSelectorReceiver.java" target-dir="src/com/cordova/upi"/>
     </platform>
 </plugin>

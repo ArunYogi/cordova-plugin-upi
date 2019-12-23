@@ -72,7 +72,9 @@ Sample response of successful payment
   "responseCode": "00",
   "status": "SUCCESS",
   "txnId": "764900774.690841",
-  "txnRef": "417855597.31908274"
+  "txnRef": "417855597.31908274",
+  "appId": "com.phonepe.app.preprod",
+  "appName": "PhonePe Preprod",
 }
 ```
 
@@ -84,6 +86,16 @@ Sample response of failure payment
   "responseCode": "ZD",
   "status": "FAILURE",
   "txnId": "901818401.3087038",
-  "txnRef": "654595701.7025663"
+  "txnRef": "654595701.7025663",
+  "appId": "com.phonepe.app.preprod",
+  "appName": "PhonePe Preprod",
 }
 ```
+
+### Release Notes:
+# 1.0.0:
+ Initial Release of cordova plugin for upi transaction
+
+# 1.0.1:
+  Added capability to fetch all UPI supported apps rather than predefined list (added in 1.0.0v)
+  Added capability to send upi app details used for payment, in response.
