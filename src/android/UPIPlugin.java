@@ -228,7 +228,7 @@ public class UPIPlugin extends CordovaPlugin {
             String key = _parts[i].split("=")[0];
             String value = _parts[i].split("=")[1];
             json.put(key, value);
-            if (key.toLowerCase() == "status") {
+            if ("status".equalsIgnoreCase(key)) {
                 json.put("status", value);
             }
         }
