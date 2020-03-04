@@ -183,7 +183,11 @@ public class UPIPlugin extends CordovaPlugin {
                     try {
                         parseUpiResponse(intent.getStringExtra("response"), result);
                         String status = result.getString("status");
-                        this.callbackContext.success(result);
+                        if("SUCCESS".equalsIgnoreCase(status)){
+                            this.callbackContext.success(result);
+                        } else {
+                            this.callbackContext.error(result);
+                        }
                     } catch (Exception exp) {
                         Log.e(TAG, "Issue in checking the status of  while parsing response from UPI callback", exp);
                         this.callbackContext.error("null_response");
