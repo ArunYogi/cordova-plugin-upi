@@ -99,3 +99,9 @@ Sample response of failure payment
 # 1.0.1:
   Added capability to fetch all UPI supported apps rather than predefined list (added in 1.0.0v)
   Added capability to send upi app details used for payment, in response.
+
+#1.0.2:
+Bug fix related to defensive check on "Status" field.
+
+# 1.0.3:
+Bug fix related to defensive check on the intent extras for value.
