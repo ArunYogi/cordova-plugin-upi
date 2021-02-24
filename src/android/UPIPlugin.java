@@ -228,13 +228,22 @@ public class UPIPlugin extends CordovaPlugin {
 
     private void parseUpiResponse(String upi_response, JSONObject json) throws JSONException {
         String[] _parts = upi_response.split("&");
+        try {
         for (int i = 0; i < _parts.length; ++i) {
             String key = _parts[i].split("=")[0];
-            String value = _parts[i].split("=")[1];
+            String value = null;
+            if(_parts[i].split("=").length > 1) {
+            	// To handle response => txnId=1614149099033&responseCode=00&ApprovalRefNo=&Status=SUCCESS&txnRef=1614149099033;
+            	// ApprovalRefNo=
+            	value = _parts[i].split("=")[1];
+            }
             json.put(key, value);
             if ("status".equalsIgnoreCase(key)) {
                 json.put("status", value);
             }
+        }
+        } catch(Exception e) {
+        	Log.e(TAG, "Error while parsing UPI Response: " + e.toString());
         }
     }
 
