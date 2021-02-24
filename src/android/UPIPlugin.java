@@ -229,11 +229,14 @@ public class UPIPlugin extends CordovaPlugin {
     private void parseUpiResponse(String upi_response, JSONObject json) throws JSONException {
         String[] _parts = upi_response.split("&");
         for (int i = 0; i < _parts.length; ++i) {
-            String key = _parts[i].split("=")[0];
-            String value = _parts[i].split("=")[1];
-            json.put(key, value);
-            if ("status".equalsIgnoreCase(key)) {
-                json.put("status", value);
+            String[] p_s = _parts[i].split("=");
+            if (p_s.length = 2) {
+                String key = p_s[0];
+                String value = p_s[1];;
+                json.put(key, value);
+                if ("status".equalsIgnoreCase(key)) {
+                    json.put("status", value);
+                }
             }
         }
     }

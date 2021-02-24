@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-upi",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "This Plugin allows you receive payment via UPI.",
   "main": "www/upi.js",
   "scripts": {

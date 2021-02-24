@@ -102,3 +102,6 @@ Sample response of failure payment
 
 # 1.0.2:
   Bug fix related to defensive check on "Status" field.
+
+# 1.0.3:
+  Bug fix to handle Empty Param from UPI apps in response. [Issue](https://github.com/ArunYogi/cordova-plugin-upi/issues/6)
