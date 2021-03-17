@@ -230,7 +230,7 @@ public class UPIPlugin extends CordovaPlugin {
         String[] _parts = upi_response.split("&");
         for (int i = 0; i < _parts.length; ++i) {
             String[] p_s = _parts[i].split("=");
-            if (p_s.length = 2) {
+            if (p_s.length == 2) {
                 String key = p_s[0];
                 String value = p_s[1];;
                 json.put(key, value);

@@ -105,3 +105,6 @@ Sample response of failure payment
 
 # 1.0.3:
   Bug fix to handle Empty Param from UPI apps in response. [Issue](https://github.com/ArunYogi/cordova-plugin-upi/issues/6)
+
+# 1.0.4:
+  Bug fix
