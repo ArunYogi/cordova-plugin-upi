@@ -5,7 +5,7 @@ Cordova plugin to pay via UPI supported apps via intent based
 * Android
 
 ### Installations:
-> yarn add https://github.com/the-deadshot/cordova-plugin-upi
+> cordova plugin add cordova-plugin-upi
 
 After installation, the upi plugin would be avilable in "window" object.
 
