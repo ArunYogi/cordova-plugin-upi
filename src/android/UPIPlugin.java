@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -147,8 +148,14 @@ public class UPIPlugin extends CordovaPlugin {
 
             if (UPIPlugin.application == null) {
                 Intent receiver = new Intent(context, ApplicationSelectorReceiver.class);
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, receiver,
-                        PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent pendingIntent;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    pendingIntent = PendingIntent.getBroadcast(context, 0, receiver,
+                            PendingIntent.FLAG_IMMUTABLE);
+                } else {
+                    pendingIntent = PendingIntent.getBroadcast(context, 0, receiver,
+                            PendingIntent.FLAG_UPDATE_CURRENT);
+                }
                 Intent chooser = Intent.createChooser(intent, "Pay using", pendingIntent.getIntentSender());
                 if (chooser != null) {
                     cordova.startActivityForResult(this, chooser, REQUEST_CODE);
@@ -183,7 +190,7 @@ public class UPIPlugin extends CordovaPlugin {
                     try {
                         parseUpiResponse(intent.getStringExtra("response"), result);
                         String status = result.getString("status");
-                        if("SUCCESS".equalsIgnoreCase(status)){
+                        if ("SUCCESS".equalsIgnoreCase(status)) {
                             this.callbackContext.success(result);
                         } else {
                             this.callbackContext.error(result);
@@ -232,7 +239,7 @@ public class UPIPlugin extends CordovaPlugin {
             String[] p_s = _parts[i].split("=");
             if (p_s.length == 2) {
                 String key = p_s[0];
-                String value = p_s[1];;
+                String value = p_s[1];
                 json.put(key, value);
                 if ("status".equalsIgnoreCase(key)) {
                     json.put("status", value);
